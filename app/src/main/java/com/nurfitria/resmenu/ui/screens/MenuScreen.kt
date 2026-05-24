@@ -74,7 +74,11 @@ fun MenuScreen(navController: NavHostController, prefs: SharedPreferences) {
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { navController.navigate("add_menu") }) {
+            FloatingActionButton(
+                onClick = { navController.navigate("add_menu") },
+                containerColor = Color(0xFF7A5C43), // Warna Cokelat Hangat (Sama seperti Home)
+                contentColor = Color.White          // Warna Ikon Plus Tetap Putih
+            ) {
                 Icon(Icons.Default.Add, contentDescription = "Tambah Menu")
             }
         }

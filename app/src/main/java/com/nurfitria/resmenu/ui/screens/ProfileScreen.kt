@@ -1,6 +1,5 @@
 package com.nurfitria.resmenu.ui.screens
 
-
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
@@ -45,12 +44,20 @@ fun ProfileScreen(navController: NavHostController, prefs: SharedPreferences, up
                 title = { Text("Profil") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = "Back",
+                            tint = MaterialTheme.colorScheme.onSurface // Adaptif Hitam/Putih
+                        )
                     }
                 },
                 actions = {
                     IconButton(onClick = { navController.navigate("edit_profile") }) {
-                        Icon(Icons.Default.Edit, contentDescription = "Edit")
+                        Icon(
+                            Icons.Default.Edit,
+                            contentDescription = "Edit",
+                            tint = MaterialTheme.colorScheme.onSurface // Adaptif Hitam/Putih
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -68,14 +75,16 @@ fun ProfileScreen(navController: NavHostController, prefs: SharedPreferences, up
         ) {
             Surface(
                 shape = CircleShape,
-                color = MaterialTheme.colorScheme.primary,
+                // PERBAIKAN 1: Mengubah warna bulatan menjadi Abu-abu Lembut (SurfaceVariant)
+                color = MaterialTheme.colorScheme.surfaceVariant,
                 modifier = Modifier.size(100.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.Storefront,
                     contentDescription = null,
                     modifier = Modifier.padding(24.dp),
-                    tint = MaterialTheme.colorScheme.onPrimary
+                    // Konten ikon menyesuaikan teks di atas warna abu-abu
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
@@ -113,7 +122,7 @@ fun ProfileItem(icon: ImageVector, label: String, value: String, modifier: Modif
             .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+        Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.outline)
         Spacer(modifier = Modifier.width(16.dp))
         Column {
             Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.outline)
@@ -125,15 +134,11 @@ fun ProfileItem(icon: ImageVector, label: String, value: String, modifier: Modif
 @androidx.compose.ui.tooling.preview.Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ProfileScreenPreview() {
-    val context =
-        LocalContext.current // Anda bisa langsung pakai LocalContext karena sudah di-import di atas
-    val dummyPrefs =
-        context.getSharedPreferences("dummy_prefs", android.content.Context.MODE_PRIVATE)
+    val context = LocalContext.current
+    val dummyPrefs = context.getSharedPreferences("dummy_prefs", android.content.Context.MODE_PRIVATE)
 
     ProfileScreen(
         navController = androidx.navigation.compose.rememberNavController(),
         prefs = dummyPrefs
     )
 }
-
-
