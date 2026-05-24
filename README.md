@@ -28,6 +28,13 @@ Aplikasi ini memungkinkan pengguna untuk melihat daftar menu, menambahkan menu b
 - **Navigasi:** Menggunakan **Compose Navigation** untuk perpindahan antar halaman yang mulus.
 
 ## Screenshot
+<img width="1080" height="2400" alt="Screenshot_DetailMenuScreen" src="https://github.com/user-attachments/assets/18e0bc16-2e58-4d92-b03d-bbdf82b3ece8" />
+<img width="1080" height="2400" alt="Screenshot_DarkScreen" src="https://github.com/user-attachments/assets/d041d5ed-5d88-4397-9050-7d55402346a8" />
+<img width="1080" height="2400" alt="Screenshot_SplashScreen" src="https://github.com/user-attachments/assets/6cc1798b-62d6-4650-9712-ffc9f35c2311" />
+<img width="1080" height="2400" alt="Screenshot_ProfileScreen" src="https://github.com/user-attachments/assets/d75d1ddc-3b3e-4c80-927a-bf12e7acacb6" />
+<img width="1080" height="2400" alt="Screenshot_MenuScreen" src="https://github.com/user-attachments/assets/2489c8e8-e7f9-4ac2-9f17-f35e5eb972e6" />
+<img width="1080" height="2400" alt="Screenshot_HomeScreen" src="https://github.com/user-attachments/assets/cfb36fa8-2a6a-4fdd-8f62-304082af2b0a" />
+<img width="1080" height="2400" alt="Screenshot_EditProfileScreen" src="https://github.com/user-attachments/assets/f6d5ddfe-adad-43f9-9700-5d0b5f2eb7c2" />
 
 
 
