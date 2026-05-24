@@ -34,6 +34,9 @@ Aplikasi ini memungkinkan pengguna untuk melihat daftar menu, menambahkan menu b
 <img width="1080" height="2400" alt="Screenshot_DetailScreen" src="https://github.com/user-attachments/assets/08351f48-5bbe-4e72-bf14-00b892de883a" />
 <img width="1080" height="2400" alt="Screenshot_AfterEditProfileScreen" src="https://github.com/user-attachments/assets/0bc66af6-b1d2-4308-8d03-d45498b967a1" />
 <img width="1080" height="2400" alt="Screenshot_SplashScreen" src="https://github.com/user-attachments/assets/6bb13dc8-5db9-4cb2-b8bd-fb92c4cf0738" />
+<img width="1080" height="2400" alt="Screenshot_MenuResScreen" src="https://github.com/user-attachments/assets/ef99e568-ea46-4a4d-8cd2-3559e1af0f7e" />
+
+
 
 
 
