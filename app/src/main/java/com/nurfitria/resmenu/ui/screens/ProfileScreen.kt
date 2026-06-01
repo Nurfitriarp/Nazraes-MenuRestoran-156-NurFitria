@@ -3,20 +3,29 @@ package com.nurfitria.resmenu.ui.screens
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.TextAlign
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,6 +39,12 @@ fun ProfileScreen(navController: NavHostController, prefs: SharedPreferences, up
 
     val snackbarHostState = remember { SnackbarHostState() }
 
+    // COLOR PALETTE ULTRA DARK (Sesuai dengan Home & Menu)
+    val bgBlack = Color(0xFF0D0D0D)
+    val cardDark = Color(0xFF1A1A1A)
+    val accentOrangeBrown = Color(0xFFE65100)
+    val textGrey = Color(0xFF9E9E9E)
+
     LaunchedEffect(updated) {
         if (updated) {
             snackbarHostState.showSnackbar("Profil berhasil diperbarui!")
@@ -38,96 +53,202 @@ fun ProfileScreen(navController: NavHostController, prefs: SharedPreferences, up
 
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        containerColor = bgBlack, // Mengubah dasar warna latar belakang menjadi hitam pekat
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Profil") },
+                title = { Text("Profil", fontWeight = FontWeight.Bold, color = Color.White) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            Icons.Default.ArrowBack,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onSurface // Adaptif Hitam/Putih
-                        )
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
                     }
                 },
-                actions = {
-                    IconButton(onClick = { navController.navigate("edit_profile") }) {
-                        Icon(
-                            Icons.Default.Edit,
-                            contentDescription = "Edit",
-                            tint = MaterialTheme.colorScheme.onSurface // Adaptif Hitam/Putih
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = bgBlack)
             )
         }
     ) { padding ->
         Column(
             modifier = Modifier
-                .padding(padding)
                 .fillMaxSize()
+                .padding(padding)
+                .background(bgBlack)
+                .verticalScroll(rememberScrollState())
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // 1. SECTION AVATAR HEADER TERPUSAT (Sesuai Target Gambar)
             Surface(
                 shape = CircleShape,
-                // PERBAIKAN 1: Mengubah warna bulatan menjadi Abu-abu Lembut (SurfaceVariant)
-                color = MaterialTheme.colorScheme.surfaceVariant,
-                modifier = Modifier.size(100.dp)
+                color = accentOrangeBrown.copy(alpha = 0.2f),
+                modifier = Modifier.size(96.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.Storefront,
                     contentDescription = null,
                     modifier = Modifier.padding(24.dp),
-                    // Konten ikon menyesuaikan teks di atas warna abu-abu
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    tint = Color.White
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = name,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+
+            Text(
+                text = email,
+                fontSize = 14.sp,
+                color = textGrey,
+                modifier = Modifier.padding(top = 2.dp)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Tombol Edit Profile berbentuk kapsul tipis di bawah nama-email
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(cardDark)
+                    .clickable { navController.navigate("edit_profile") }
+                    .padding(horizontal = 20.dp, vertical = 8.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Edit, contentDescription = null, tint = Color.White, modifier = Modifier.size(14.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text("Edit Profile", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Medium)
+                }
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            // 2. KELOMPOK PERTAMA: GENERAL SECTION
+            Text(
+                text = "General",
+                color = textGrey,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
+                textAlign = TextAlign.Start
+            )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(cardDark)
+            ) {
+                // Item Alamat / Lokasi (Klik buka Google Maps)
+                ProfileItemRow(
+                    icon = Icons.Default.LocationOn,
+                    title = "Location",
+                    subtitle = address,
+                    onClick = {
+                        val gmmIntentUri = Uri.parse("geo:0,0?q=${Uri.encode(address)}")
+                        val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri).apply {
+                            setPackage("com.google.android.apps.maps")
+                        }
+                        context.startActivity(mapIntent)
+                    }
+                )
+
+                HorizontalDivider(color = bgBlack, thickness = 2.dp)
+
+                // Item Jam Operasional
+                ProfileItemRow(
+                    icon = Icons.Default.Schedule,
+                    title = "Operational Hours",
+                    subtitle = hours,
+                    onClick = {}
                 )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
-            @Suppress("DEPRECATION")
-            Text(name, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(24.dp))
 
-            ProfileItem(icon = Icons.Default.Email, label = "Email", value = email)
-
-            // Klik Alamat untuk buka Google Maps (Implicit Intent)
-            ProfileItem(
-                icon = Icons.Default.LocationOn,
-                label = "Alamat",
-                value = address,
-                modifier = Modifier.clickable {
-                    val gmmIntentUri = Uri.parse("geo:0,0?q=${Uri.encode(address)}")
-                    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-                    mapIntent.setPackage("com.google.android.apps.maps")
-                    context.startActivity(mapIntent)
-                }
+            // 3. KELOMPOK KEDUA: OTHER SECTION
+            Text(
+                text = "Other",
+                color = textGrey,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
+                textAlign = TextAlign.Start
             )
 
-            ProfileItem(icon = Icons.Default.Schedule, label = "Jam Operasional", value = hours)
-            ProfileItem(icon = Icons.Default.Info, label = "Deskripsi", value = description)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(cardDark)
+            ) {
+                // Item Deskripsi Aplikasi Restoran
+                ProfileItemRow(
+                    icon = Icons.Default.Info,
+                    title = "Restaurant Description",
+                    subtitle = description,
+                    onClick = {}
+                )
+            }
+
+            Spacer(modifier = Modifier.height(40.dp))
         }
     }
 }
 
+// Komponen Baris Item Menu Profil Adaptif Baru
 @Composable
-fun ProfileItem(icon: ImageVector, label: String, value: String, modifier: Modifier = Modifier) {
+fun ProfileItemRow(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    onClick: () -> Unit
+) {
     Row(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp),
+            .clickable { onClick() }
+            .padding(horizontal = 20.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.outline)
-        Spacer(modifier = Modifier.width(16.dp))
-        Column {
-            Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.outline)
-            Text(value, style = MaterialTheme.typography.bodyLarge)
+        // Icon Sisi Kiri
+        Surface(
+            shape = RoundedCornerShape(12.dp),
+            color = Color.White.copy(alpha = 0.05f),
+            modifier = Modifier.size(40.dp)
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier.padding(10.dp)
+            )
         }
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        // Label Keterangan Tengah
+        Column(modifier = Modifier.weight(1f)) {
+            Text(text = title, color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+            Text(
+                text = subtitle,
+                color = Color(0xFF9E9E9E),
+                fontSize = 12.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(top = 2.dp)
+            )
+        }
+
+        // Panah Indikator Kanan (Sesuai Target Gambar)
+        Icon(
+            imageVector = Icons.Default.ChevronRight,
+            contentDescription = null,
+            tint = Color(0xFF616161),
+            modifier = Modifier.size(20.dp)
+        )
     }
 }
 

@@ -1,14 +1,15 @@
 package com.nurfitria.resmenu.ui.screens
 
-
 import android.content.SharedPreferences
 import android.widget.Toast
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,6 +27,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -45,85 +47,95 @@ fun MenuScreen(navController: NavHostController, prefs: SharedPreferences) {
 
     val menuList = remember { mutableStateListOf<MenuItem>() }
 
+    // THEME DESIGN SYSTEM (Sama seperti Home & Detail)
+    val bgBlack = Color(0xFF0D0D0D)
+    val cardDark = Color(0xFF1A1A1A)
+    val accentOrangeBrown = Color(0xFFE65100)
+    val textGrey = Color(0xFF9E9E9E)
+
     LaunchedEffect(Unit) {
         menuList.clear()
         menuList.addAll(MenuRepository.getMenu(prefs))
-        delay(1500)
+        delay(1000)
         isLoading = false
     }
 
     val filteredMenu = menuList.filter { item ->
-        val matchesCategory = if (selectedCategory == "Semua") true else item.category == selectedCategory
+        val matchesCategory = if (selectedCategory == "Semua") true else item.category.equals(selectedCategory, ignoreCase = true)
         val matchesSearch = item.name.contains(searchQuery, ignoreCase = true)
         matchesCategory && matchesSearch
     }
 
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        containerColor = bgBlack, // Latar belakang utama hitam pekat
         topBar = {
             TopAppBar(
-                title = { Text("Menu Restoran") },
+                title = { Text("Menu Restoran", fontWeight = FontWeight.Bold, color = Color.White) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
+                actions = {
+                    IconButton(onClick = { /* Opsi Pencarian tambahan / Filter */ }) {
+                        Icon(Icons.Default.Search, contentDescription = "Search", tint = Color.White)
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = bgBlack)
             )
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate("add_menu") },
-                containerColor = Color(0xFF7A5C43), // Warna Cokelat Hangat (Sama seperti Home)
-                contentColor = Color.White          // Warna Ikon Plus Tetap Putih
+                containerColor = accentOrangeBrown, // Diubah ke Oranye-Cokelat agar selaras
+                contentColor = Color.White,
+                shape = CircleShape
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Tambah Menu")
             }
         }
     ) { padding ->
-        Column(modifier = Modifier.padding(padding)) {
-            // Search Bar
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                placeholder = { Text("Cari Menu...") },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                trailingIcon = {
-                    if (searchQuery.isNotEmpty()) {
-                        IconButton(onClick = { searchQuery = "" }) {
-                            Icon(Icons.Default.Clear, contentDescription = "Clear")
-                        }
-                    }
-                },
-                singleLine = true,
-                shape = RoundedCornerShape(12.dp)
-            )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .background(bgBlack)
+        ) {
 
-            // Filter Chips
+            // KATEGORI HORIZONTAL (Gaya Kapsul Minimalis Sesuai Gambar 2)
             LazyRow(
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(categories) { category ->
-                    FilterChip(
-                        selected = selectedCategory == category,
-                        onClick = { selectedCategory = category },
-                        label = { Text(category) }
-                    )
+                    val isSelected = selectedCategory == category
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(if (isSelected) accentOrangeBrown else cardDark)
+                            .clickable { selectedCategory = category }
+                            .padding(horizontal = 24.dp, vertical = 10.dp)
+                    ) {
+                        Text(
+                            text = category,
+                            color = if (isSelected) Color.White else textGrey,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp
+                        )
+                    }
                 }
             }
 
             if (isLoading) {
-                LazyColumn(
+                // Shimmer Loading Grid
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
                     contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    items(5) { ShimmerItem() }
+                    items(4) { ShimmerGridItem() }
                 }
             } else if (filteredMenu.isEmpty()) {
                 Column(
@@ -131,95 +143,103 @@ fun MenuScreen(navController: NavHostController, prefs: SharedPreferences) {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.RestaurantMenu,
-                        contentDescription = null,
-                        modifier = Modifier.size(100.dp),
-                        tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
-                    )
+                    Icon(Icons.Default.RestaurantMenu, contentDescription = null, modifier = Modifier.size(80.dp), tint = cardDark)
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        "Belum ada menu yang ditambahkan.",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.outline,
-                        textAlign = TextAlign.Center
-                    )
-                    Text(
-                        "Coba cari dengan kata kunci lain atau tambah menu baru.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.7f),
-                        textAlign = TextAlign.Center
-                    )
+                    Text("Menu tidak ditemukan", fontWeight = FontWeight.Bold, color = Color.White, fontSize = 18.sp)
                 }
             } else {
-                LazyColumn(
-                    contentPadding = PaddingValues(16.dp, 16.dp, 16.dp, 80.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                // IMPLEMENTASI UTAMA: LAYOUT GRID BERPASANGAN 2 KOLOM (GABUNGAN GAMBAR 1 & 2)
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 100.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(filteredMenu, key = { it.id }) { item ->
-                        val dismissState = rememberSwipeToDismissBoxState(
-                            confirmValueChange = {
-                                if (it == SwipeToDismissBoxValue.StartToEnd) {
-                                    Toast.makeText(context, "${item.name} dibagikan!", Toast.LENGTH_SHORT).show()
-                                    false
-                                } else {
-                                    false
-                                }
-                            }
-                        )
-
-                        SwipeToDismissBox(
-                            state = dismissState,
-                            backgroundContent = {
-                                val color = when (dismissState.targetValue) {
-                                    SwipeToDismissBoxValue.StartToEnd -> Color(0xFF4CAF50)
-                                    else -> Color.Transparent
-                                }
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .clip(RoundedCornerShape(12.dp))
-                                        .background(color)
-                                        .padding(horizontal = 20.dp),
-                                    contentAlignment = Alignment.CenterStart
-                                ) {
-                                    if (dismissState.targetValue == SwipeToDismissBoxValue.StartToEnd) {
-                                        Icon(Icons.Default.Share, contentDescription = "Share", tint = Color.White)
-                                    }
-                                }
-                            },
-                            enableDismissFromEndToStart = false
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(28.dp))
+                                .background(cardDark)
+                                .clickable { navController.navigate("detail/${item.id}") }
+                                .padding(14.dp)
                         ) {
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { navController.navigate("detail/${item.id}") },
-                                elevation = CardDefaults.cardElevation(4.dp)
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.fillMaxWidth()
                             ) {
+                                // Foto Hidangan Berbentuk Lingkaran Besar Menawan di Tengah Atas
+                                AsyncImage(
+                                    model = item.imageUrl,
+                                    contentDescription = item.name,
+                                    modifier = Modifier
+                                        .size(110.dp)
+                                        .clip(CircleShape),
+                                    contentScale = ContentScale.Crop
+                                )
+
+                                Spacer(modifier = Modifier.height(14.dp))
+
+                                // Nama Hidangan Rata Kiri
+                                Text(
+                                    text = item.name,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 15.sp,
+                                    color = Color.White,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.Start
+                                )
+
+                                Spacer(modifier = Modifier.height(4.dp))
+
+                                // Deskripsi Singkat di bawah judul
+                                Text(
+                                    text = item.description,
+                                    fontSize = 11.sp,
+                                    color = textGrey,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.Start
+                                )
+
+                                Spacer(modifier = Modifier.height(12.dp))
+
+                                // Rating Bintang Kecil Statis & Label Harga (Kiri Bawah)
                                 Row(
-                                    modifier = Modifier.padding(16.dp),
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    AsyncImage(
-                                        model = item.imageUrl,
-                                        contentDescription = null,
-                                        modifier = Modifier
-                                            .size(60.dp)
-                                            .clip(RoundedCornerShape(8.dp)),
-                                        contentScale = ContentScale.Crop
-                                    )
-                                    Spacer(modifier = Modifier.width(16.dp))
-                                    Column(modifier = Modifier.weight(1f)) {
-                                        Text(item.name, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                                        Text(item.price, color = MaterialTheme.colorScheme.secondary)
-                                        Text(
-                                            item.category,
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = MaterialTheme.colorScheme.outline
-                                        )
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(Icons.Default.Star, contentDescription = null, tint = Color(0xFFFFD700), modifier = Modifier.size(14.dp))
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text("4.8", color = textGrey, fontSize = 12.sp, fontWeight = FontWeight.Medium)
                                     }
-                                    Icon(Icons.Default.ChevronRight, contentDescription = null)
+
+                                    Text(
+                                        text = item.price.replace("Rp ", "Rp"), // Menghapus spasi harga agar pas
+                                        color = accentOrangeBrown,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        fontSize = 14.sp
+                                    )
                                 }
+                            }
+
+                            // Badge Bulat kecil Transparan untuk Tombol Bookmark / Suka di Sudut Atas Card
+                            Surface(
+                                shape = CircleShape,
+                                color = Color.White.copy(alpha = 0.07f),
+                                modifier = Modifier.align(Alignment.TopEnd).size(32.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.FavoriteBorder,
+                                    contentDescription = null,
+                                    tint = Color.White.copy(alpha = 0.6f),
+                                    modifier = Modifier.padding(8.dp)
+                                )
                             }
                         }
                     }
@@ -230,42 +250,38 @@ fun MenuScreen(navController: NavHostController, prefs: SharedPreferences) {
 }
 
 @Composable
-fun ShimmerItem() {
+fun ShimmerGridItem() {
     val shimmerColors = listOf(
-        Color.LightGray.copy(alpha = 0.6f),
-        Color.LightGray.copy(alpha = 0.2f),
-        Color.LightGray.copy(alpha = 0.6f),
+        Color.White.copy(alpha = 0.1f),
+        Color.White.copy(alpha = 0.03f),
+        Color.White.copy(alpha = 0.1f),
     )
-
     val transition = rememberInfiniteTransition(label = "shimmer")
     val translateAnim by transition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1000f,
+        initialValue = 0f, targetValue = 1000f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1000, easing = FastOutSlowInEasing),
+            animation = tween(1000, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Restart
-        ),
-        label = "shimmer"
+        ), label = "shimmer"
     )
-
     val brush = Brush.linearGradient(
-        colors = shimmerColors,
-        start = Offset.Zero,
-        end = Offset(x = translateAnim, y = translateAnim)
+        colors = shimmerColors, start = Offset.Zero, end = Offset(translateAnim, translateAnim)
     )
 
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(2.dp)
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+            .clip(RoundedCornerShape(28.dp))
+            .background(Color(0xFF1A1A1A))
+            .padding(16.dp)
     ) {
-        Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-            Box(modifier = Modifier.size(60.dp).clip(RoundedCornerShape(8.dp)).background(brush))
-            Spacer(modifier = Modifier.width(16.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Box(modifier = Modifier.fillMaxWidth(0.7f).height(20.dp).background(brush))
-                Spacer(modifier = Modifier.height(8.dp))
-                Box(modifier = Modifier.fillMaxWidth(0.3f).height(14.dp).background(brush))
-            }
+        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+            Box(modifier = Modifier.size(100.dp).clip(CircleShape).background(brush))
+            Spacer(modifier = Modifier.height(16.dp))
+            Box(modifier = Modifier.fillMaxWidth(0.8f).height(16.dp).background(brush))
+            Spacer(modifier = Modifier.height(8.dp))
+            Box(modifier = Modifier.fillMaxWidth(0.5f).height(12.dp).background(brush))
         }
     }
 }
@@ -273,7 +289,7 @@ fun ShimmerItem() {
 @androidx.compose.ui.tooling.preview.Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun MenuScreenPreview() {
-    val context = LocalContext.current // Anda bisa langsung pakai LocalContext karena sudah di-import di atas
+    val context = LocalContext.current
     val dummyPrefs = context.getSharedPreferences("dummy_prefs", android.content.Context.MODE_PRIVATE)
 
     MenuScreen(
