@@ -28,13 +28,16 @@ Aplikasi ini memungkinkan pengguna untuk melihat daftar menu, menambahkan menu b
 - **Navigasi:** Menggunakan **Compose Navigation** untuk perpindahan antar halaman yang mulus.
 
 ## Screenshot
-<img width="1080" height="2400" alt="Screenshot_DetailMenuScreen" src="https://github.com/user-attachments/assets/18e0bc16-2e58-4d92-b03d-bbdf82b3ece8" />
-<img width="1080" height="2400" alt="Screenshot_DarkScreen" src="https://github.com/user-attachments/assets/d041d5ed-5d88-4397-9050-7d55402346a8" />
-<img width="1080" height="2400" alt="Screenshot_SplashScreen" src="https://github.com/user-attachments/assets/6cc1798b-62d6-4650-9712-ffc9f35c2311" />
-<img width="1080" height="2400" alt="Screenshot_ProfileScreen" src="https://github.com/user-attachments/assets/d75d1ddc-3b3e-4c80-927a-bf12e7acacb6" />
-<img width="1080" height="2400" alt="Screenshot_MenuScreen" src="https://github.com/user-attachments/assets/2489c8e8-e7f9-4ac2-9f17-f35e5eb972e6" />
-<img width="1080" height="2400" alt="Screenshot_HomeScreen" src="https://github.com/user-attachments/assets/cfb36fa8-2a6a-4fdd-8f62-304082af2b0a" />
-<img width="1080" height="2400" alt="Screenshot_EditProfileScreen" src="https://github.com/user-attachments/assets/f6d5ddfe-adad-43f9-9700-5d0b5f2eb7c2" />
+<img width="1080" height="2400" alt="MenuScreen" src="https://github.com/user-attachments/assets/a9d2fb22-c8e7-4ecf-b1e6-5ca94d5e6eac" />
+<img width="1080" height="2400" alt="HomeScreen" src="https://github.com/user-attachments/assets/04e000fe-0e91-40f7-9e50-02a929a2b69b" />
+<img width="1080" height="2400" alt="EditProfileScreen" src="https://github.com/user-attachments/assets/e8f158be-ea75-4bf6-9a36-fd3185a78ca9" />
+<img width="1080" height="2400" alt="EditMenuScreen" src="https://github.com/user-attachments/assets/c479ad8c-2dc7-4bb1-a59e-bcd0a93d3222" />
+<img width="1080" height="2400" alt="DetailScreen" src="https://github.com/user-attachments/assets/51587638-0e29-417d-b6b3-9c1b53fd4998" />
+<img width="1080" height="2400" alt="AddMenuScreen" src="https://github.com/user-attachments/assets/2a81fb9d-1ac3-4c18-b5de-29484b39f580" />
+<img width="1080" height="2400" alt="SplashScreen" src="https://github.com/user-attachments/assets/71e62b69-591f-4a80-b92a-43b0f4767b8d" />
+<img width="1080" height="2400" alt="Screenshot_DarkScreen" src="https://github.com/user-attachments/assets/d8f67703-c220-4b28-87ac-8c12912a0b82" />
+<img width="1080" height="2400" alt="ProfileScreen" src="https://github.com/user-attachments/assets/c4c6413f-828d-4eeb-883b-7d8cdfe1cafc" />
+
 
 
 
