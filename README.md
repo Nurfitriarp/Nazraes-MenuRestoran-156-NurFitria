@@ -47,10 +47,11 @@ Aplikasi ini memungkinkan pengguna untuk melihat daftar menu, menambahkan menu b
 <img width="1080" height="2400" alt="AddMenuScreen" src="https://github.com/user-attachments/assets/2a81fb9d-1ac3-4c18-b5de-29484b39f580" />
 
 ## Edit Menu Screen
-<img width="1080" height="2400" alt="EditProfileScreen" src="https://github.com/user-attachments/assets/e8f158be-ea75-4bf6-9a36-fd3185a78ca9" />
+<img width="1080" height="2400" alt="EditMenuScreen" src="https://github.com/user-attachments/assets/c479ad8c-2dc7-4bb1-a59e-bcd0a93d3222" />
 
 ## Edit Profile Screen
-<img width="1080" height="2400" alt="EditMenuScreen" src="https://github.com/user-attachments/assets/c479ad8c-2dc7-4bb1-a59e-bcd0a93d3222" />
+<img width="1080" height="2400" alt="EditProfileScreen" src="https://github.com/user-attachments/assets/e8f158be-ea75-4bf6-9a36-fd3185a78ca9" />
+
 
 
 
